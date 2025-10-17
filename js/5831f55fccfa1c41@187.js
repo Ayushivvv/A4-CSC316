@@ -1,12 +1,15 @@
 function createChart(d3, data) {
     // Specify the chart’s dimensions.
-    var height = window.innerHeight - 20;
-    var width = height + 500;
+    var bg = "hsla(109, 59%, 77%, 1.00)"
+    var colour_in = "hsla(235, 48%, 43%, 1.00)"
+
+    var height = window.innerHeight;
+    var width = window.innerWidth /1.2;
 
     // Create the color scale.
     const color = d3.scaleLinear()
         .domain([0, 5])
-        .range(["hsl(152,80%,80%)", "hsl(228,30%,40%)"])
+        .range([bg, colour_in])
         .interpolate(d3.interpolateHcl);
 
     // Compute the layout.
@@ -28,17 +31,25 @@ function createChart(d3, data) {
             a.y = d.y - offset / 2;
             b.y = d.y + offset / 2;
         }
+        if (d.children && d.children.length === 4) {
+            const [a, b] = d.children;
+            const offset = a.r + b.r + 10;
+            a.x = d.x - 20;
+            b.x = d.x +20;
+            a.y = d.y - offset / 4;
+            b.y = d.y + offset / 4;
+        }
     });
 
     // Create the SVG container.
     const svg = d3.create("svg")
-        .attr("viewBox", `-${width / 1.40} -${height / 1.30} ${width * 1.5} ${height * 1.5}`)
+        .attr("viewBox", `-${width/1.3} -${height / 1.3} ${width * 1.5} ${height * 1.5}`)
         .attr("width", width)
         .attr("height", height)
         .attr("style", `max-width:100%;
              height: ${height}px;
              display: block; 
-             margin: 0 -14px; 
+             margin: auto; 
              background: ${color(0)}; 
              cursor: pointer;`);
 
