@@ -1,14 +1,4 @@
-function _1(md){return(
-    md`<div style="color: grey; font: 13px/25.5px var(--sans-serif); text-transform: uppercase;"><h1 style="display: none;">Zoomable circle packing</h1><a href="https://d3js.org/">D3</a> › <a href="/@d3/gallery">Gallery</a></div>
-
-# Zoomable circle packing
-
-Click to zoom in or out.`
-)}
-
-function _chart(d3,data)
-{
-
+function createChart(d3, data) {
     // Specify the chart’s dimensions.
     const width = 928;
     const height = width;
@@ -66,26 +56,20 @@ function _chart(d3,data)
 
     function zoomTo(v) {
         const k = width / v[2];
-
         view = v;
-
         label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
         node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
         node.attr("r", d => d.r * k);
     }
 
     function zoom(event, d) {
-        const focus0 = focus;
-
         focus = d;
-
         const transition = svg.transition()
             .duration(event.altKey ? 7500 : 750)
             .tween("zoom", d => {
                 const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
                 return t => zoomTo(i(t));
             });
-
         label
             .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
             .transition(transition)
@@ -97,20 +81,23 @@ function _chart(d3,data)
     return svg.node();
 }
 
+// Load and process the CSV data
+d3.csv("data/youtube-top-100-songs-2025.csv").then(flatData => {
+    // Group data by channel (artist)
+    const grouped = d3.group(flatData, d => d.channel);
 
-function _data(FileAttachment){return(
-    FileAttachment("youtube-data.json").json()
-)}
+    // Convert flat CSV to hierarchical structure for the chart
+    const hierarchicalData = {
+        name: "Youtube Top 100",
+        children: Array.from(grouped, ([key, values]) => ({
+            name: key,
+            children: values.map(d => ({
+                name: d.title,
+                value: +d.view_count // Ensure view_count is a number
+            }))
+        }))
+    };
 
-export default function define(runtime, observer) {
-    const main = runtime.module();
-    function toString() { return this.url; }
-    const fileAttachments = new Map([
-        ["youtube-data.json", {url: new URL("../files/youtube-data.json", import.meta.url), mimeType: "application/json", toString}]
-    ]);
-    main.builtin("FileAttachment", runtime.fileAttachments(name => fileAttachments.get(name)));
-    main.variable(observer()).define(["md"], _1);
-    main.variable(observer("chart")).define("chart", ["d3","data"], _chart);
-    main.variable(observer("data")).define("data", ["FileAttachment"], _data);
-    return main;
-}
+    const chart = createChart(d3, hierarchicalData);
+    document.body.appendChild(chart);
+});
