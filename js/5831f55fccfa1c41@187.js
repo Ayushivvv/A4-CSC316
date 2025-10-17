@@ -1,7 +1,7 @@
 function createChart(d3, data) {
     // Specify the chart’s dimensions.
-    const width = 928;
-    const height = width;
+    var height = window.innerHeight - 20;
+    var width = height + 500;
 
     // Create the color scale.
     const color = d3.scaleLinear()
@@ -12,33 +12,50 @@ function createChart(d3, data) {
     // Compute the layout.
     const pack = data => d3.pack()
         .size([width, height])
-        .padding(3)
+        .padding(24)
         (d3.hierarchy(data)
             .sum(d => d.value)
             .sort((a, b) => b.value - a.value));
+
     const root = pack(data);
+
+    root.each(d => {
+        if (d.children && d.children.length === 2) {
+            const [a, b] = d.children;
+            const offset = a.r + b.r + 10;
+            a.x = d.x;
+            b.x = d.x;
+            a.y = d.y - offset / 2;
+            b.y = d.y + offset / 2;
+        }
+    });
 
     // Create the SVG container.
     const svg = d3.create("svg")
-        .attr("viewBox", `-${width / 2} -${height / 2} ${width} ${height}`)
+        .attr("viewBox", `-${width / 1.40} -${height / 1.30} ${width * 1.5} ${height * 1.5}`)
         .attr("width", width)
         .attr("height", height)
-        .attr("style", `max-width: 100%; height: auto; display: block; margin: 0 -14px; background: ${color(0)}; cursor: pointer;`);
+        .attr("style", `max-width:100%;
+             height: ${height}px;
+             display: block; 
+             margin: 0 -14px; 
+             background: ${color(0)}; 
+             cursor: pointer;`);
 
     // Append the nodes.
     const node = svg.append("g")
         .selectAll("circle")
         .data(root.descendants().slice(1))
         .join("circle")
+        .attr("transform", d => `translate(${d.x},${d.y})`)
         .attr("fill", d => d.children ? color(d.depth) : "white")
         .attr("pointer-events", d => !d.children ? "none" : null)
-        .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
-        .on("mouseout", function() { d3.select(this).attr("stroke", null); })
+        .on("mouseover", function () { d3.select(this).attr("stroke", "#000"); })
+        .on("mouseout", function () { d3.select(this).attr("stroke", null); })
         .on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
 
     // Append the text labels.
     const label = svg.append("g")
-        .style("font", "10px sans-serif")
         .attr("pointer-events", "none")
         .attr("text-anchor", "middle")
         .selectAll("text")
@@ -46,7 +63,19 @@ function createChart(d3, data) {
         .join("text")
         .style("fill-opacity", d => d.parent === root ? 1 : 0)
         .style("display", d => d.parent === root ? "inline" : "none")
-        .text(d => d.data.name);
+        .text(d => d.data.name)
+        .style("font-size", d => {
+            if (d.depth === 0) return "10px";  // root (big)
+            if (d.depth === 1) return "18px";  // artist
+            return "27px";                      // songs
+        })
+        .style("font-weight", d => d.depth === 1 ? "bold" : "normal")
+        .style("fill", d => d.depth === 1 ? "#111" : "#444")
+        .text(d => d.data.name).each(function (d) {
+            const textWidth = this.getComputedTextLength();
+            if (textWidth > d.r * 1.8) d3.select(this).style("display", "none");
+        })
+        ;
 
     // Create the zoom behavior and zoom immediately in to the initial focus node.
     svg.on("click", (event) => zoom(event, root));
@@ -71,11 +100,11 @@ function createChart(d3, data) {
                 return t => zoomTo(i(t));
             });
         label
-            .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+            .filter(function (d) { return d.parent === focus || this.style.display === "inline"; })
             .transition(transition)
             .style("fill-opacity", d => d.parent === focus ? 1 : 0)
-            .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
-            .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+            .on("start", function (d) { if (d.parent === focus) this.style.display = "inline"; })
+            .on("end", function (d) { if (d.parent !== focus) this.style.display = "none"; });
     }
 
     return svg.node();
