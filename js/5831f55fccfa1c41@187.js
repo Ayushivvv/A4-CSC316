@@ -1,6 +1,6 @@
 function createChart(d3, data) {
     // Specify the chart’s dimensions.
-    var bg = "hsla(109, 59%, 77%, 1.00)"
+    var bg = "hsla(97, 49%, 68%, 1.00)"
     var colour_in = "hsla(235, 48%, 43%, 1.00)"
 
     var height = window.innerHeight;
@@ -40,6 +40,9 @@ function createChart(d3, data) {
             b.y = d.y + offset / 4;
         }
     });
+
+    // changing the background as well
+    d3.select("body").style("background-color", bg);
 
     // Create the SVG container.
     const svg = d3.create("svg")
