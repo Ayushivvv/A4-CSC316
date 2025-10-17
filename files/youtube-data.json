@@ -1,0 +1,665 @@
+{
+  "name": "Youtube Top 100",
+  "children": [
+    {
+      "name": "ROSÉ",
+      "children": [
+        {
+          "name": "ROSÉ & Bruno Mars - APT. (Official Music Video)",
+          "value": 2009014557
+        },
+        {
+          "name": "ROSÉ - number one girl (official music video)",
+          "value": 119135427
+        },
+        {
+          "name": "ROSÉ - toxic till the end (OFFICIAL MUSIC VIDEO)",
+          "value": 112391296
+        }
+      ]
+    },
+    {
+      "name": "Lady Gaga",
+      "children": [
+        {
+          "name": "Lady Gaga, Bruno Mars - Die With A Smile (Official Music Video)",
+          "value": 1324833300
+        },
+        {
+          "name": "Lady Gaga - Abracadabra (Official Music Video)",
+          "value": 191073418
+        },
+        {
+          "name": "Lady Gaga - Disease (Official Music Video)",
+          "value": 46125355
+        }
+      ]
+    },
+    {
+      "name": "Reneé Rapp",
+      "children": [
+        {
+          "name": "Reneé Rapp - Leave Me Alone (Official Music Video)",
+          "value": 2536628
+        },
+        {
+          "name": "Reneé Rapp - Mad (Official Music Video)",
+          "value": 2113548
+        }
+      ]
+    },
+    {
+      "name": "Billie Eilish",
+      "children": [
+        {
+          "name": "Billie Eilish - BIRDS OF A FEATHER (Official Music Video)",
+          "value": 558329099
+        },
+        {
+          "name": "Billie Eilish - WILDFLOWER (BILLIE BY FINNEAS)",
+          "value": 40408980
+        },
+        {
+          "name": "Billie Eilish - CHIHIRO (Official Music Video)",
+          "value": 148501523
+        }
+      ]
+    },
+    {
+      "name": "Sabrina Carpenter",
+      "children": [
+        {
+          "name": "Sabrina Carpenter - Espresso",
+          "value": 472570966
+        },
+        {
+          "name": "Sabrina Carpenter - Please Please Please",
+          "value": 253618903
+        },
+        {
+          "name": "Sabrina Carpenter - Manchild (Official Video)",
+          "value": 80889460
+        },
+        {
+          "name": "Sabrina Carpenter - Taste (Official Video)",
+          "value": 210275500
+        },
+        {
+          "name": "Sabrina Carpenter - Bed Chem (Official Lyric Video)",
+          "value": 44470482
+        },
+        {
+          "name": "Sabrina Carpenter - Busy Woman (Official Lyric Video)",
+          "value": 20923612
+        },
+        {
+          "name": "Sabrina Carpenter - Juno (Official Lyric Video)",
+          "value": 34725855
+        }
+      ]
+    },
+    {
+      "name": "Ed Sheeran",
+      "children": [
+        {
+          "name": "Ed Sheeran - Sapphire (Official Music Video)",
+          "value": 184696317
+        },
+        {
+          "name": "Ed Sheeran - Azizam (Official Music Video)",
+          "value": 34415168
+        }
+      ]
+    },
+    {
+      "name": "yung kai",
+      "children": [
+        {
+          "name": "yung kai - blue (official music video)",
+          "value": 187281056
+        }
+      ]
+    },
+    {
+      "name": "Zillionaire Doe ",
+      "children": [
+        {
+          "name": "Zillionaire Doe - How It's Going (Official Video)",
+          "value": 1198540
+        }
+      ]
+    },
+    {
+      "name": "Alex Warren",
+      "children": [
+        {
+          "name": "Alex Warren - Ordinary (Official Video)",
+          "value": 147871443
+        },
+        {
+          "name": "Alex Warren - Carry You Home (Official Video)",
+          "value": 52725607
+        }
+      ]
+    },
+    {
+      "name": "Kendrick Lamar",
+      "children": [
+        {
+          "name": "Kendrick Lamar - luther (Official Audio)",
+          "value": 142084039
+        },
+        {
+          "name": "Kendrick Lamar - Not Like Us",
+          "value": 397228595
+        },
+        {
+          "name": "squabble up",
+          "value": 70965585
+        }
+      ]
+    },
+    {
+      "name": "Shaboozey",
+      "children": [
+        {
+          "name": "Shaboozey - A Bar Song (Tipsy) [Official Visualizer]",
+          "value": 288277902
+        }
+      ]
+    },
+    {
+      "name": "LLOUD Official",
+      "children": [
+        {
+          "name": "LISA - BORN AGAIN feat. Doja Cat & RAYE (Official Music Video)",
+          "value": 115058148
+        },
+        {
+          "name": "LISA - NEW WOMAN feat. Rosalía (Official Music Video)",
+          "value": 174553002
+        }
+      ]
+    },
+    {
+      "name": "C'zah",
+      "children": [
+        {
+          "name": "C'zah - Vent | Official Music Video",
+          "value": 12089
+        }
+      ]
+    },
+    {
+      "name": "Lola Young",
+      "children": [
+        {
+          "name": "Lola Young - Messy (Official Video)",
+          "value": 110991682
+        }
+      ]
+    },
+    {
+      "name": "Teddy Swims",
+      "children": [
+        {
+          "name": "Teddy Swims - Bad Dreams (Official Music Video)",
+          "value": 160421970
+        }
+      ]
+    },
+    {
+      "name": "JENNIE",
+      "children": [
+        {
+          "name": "JENNIE, Doechii - ExtraL (Official Video)",
+          "value": 92973980
+        },
+        {
+          "name": "JENNIE & Dua Lipa - Handlebars (Official Video)",
+          "value": 33919328
+        },
+        {
+          "name": "JENNIE - Mantra (Official Video)",
+          "value": 208325690
+        }
+      ]
+    },
+    {
+      "name": "S.M.I.R Seattle Music Is Real",
+      "children": [
+        {
+          "name": "JWAVY - SUNSET (FEAT. MARIBASED1) [MUSIC VIDEO]",
+          "value": 7805
+        }
+      ]
+    },
+    {
+      "name": "Tommy Richman",
+      "children": [
+        {
+          "name": "Tommy Richman - MILLION DOLLAR BABY (Official Lyric Video) SHOT BY BELVEDERE",
+          "value": 45822601
+        }
+      ]
+    },
+    {
+      "name": "Doechii",
+      "children": [
+        {
+          "name": "Doechii - Anxiety (Official Video)",
+          "value": 51336708
+        }
+      ]
+    },
+    {
+      "name": "keinemusik",
+      "children": [
+        {
+          "name": "Adam Port, Stryv - Move feat. Malachiii (Extended Version)",
+          "value": 87005996
+        }
+      ]
+    },
+    {
+      "name": "NIICKII",
+      "children": [
+        {
+          "name": "Tutipsy & Niickii - Afro Disco (Visualizer)",
+          "value": 17322
+        }
+      ]
+    },
+    {
+      "name": "Post Malone",
+      "children": [
+        {
+          "name": "Post Malone - I Had Some Help (feat. Morgan Wallen) (Official Video)",
+          "value": 209840684
+        }
+      ]
+    },
+    {
+      "name": "Gracie Abrams",
+      "children": [
+        {
+          "name": "Gracie Abrams - That’s So True (Official Lyric Video)",
+          "value": 28007213
+        }
+      ]
+    },
+    {
+      "name": "Chxnny",
+      "children": [
+        {
+          "name": "NIGHT SKIES (Official Music Video)",
+          "value": 6605
+        }
+      ]
+    },
+    {
+      "name": "Sevdaliza",
+      "children": [
+        {
+          "name": "SEVDALIZA - ALIBI FT. PABLLO VITTAR & YSEULT (OFFICIAL MUSIC VIDEO)",
+          "value": 236500879
+        }
+      ]
+    },
+    {
+      "name": "Myles Smith",
+      "children": [
+        {
+          "name": "Myles Smith - Stargazing (Take My Heart Don’t Break It) - Visualiser",
+          "value": 36173120
+        },
+        {
+          "name": "Myles Smith - Nice To Meet You (Official Video)",
+          "value": 32203892
+        }
+      ]
+    },
+    {
+      "name": "ROLE MODEL",
+      "children": [
+        {
+          "name": "ROLE MODEL - Sally, When The Wine Runs Out (Official Music Video)",
+          "value": 7550110
+        }
+      ]
+    },
+    {
+      "name": "Chappell Roan",
+      "children": [
+        {
+          "name": "Chappell Roan - Good Luck, Babe! (Official Lyric Video)",
+          "value": 118077070
+        }
+      ]
+    },
+    {
+      "name": "PJ",
+      "children": [
+        {
+          "name": "PJ - The Real Thing",
+          "value": 17943
+        }
+      ]
+    },
+    {
+      "name": "sombr",
+      "children": [
+        {
+          "name": "sombr - back to friends (official video)",
+          "value": 47392334
+        }
+      ]
+    },
+    {
+      "name": "Jackson Wang",
+      "children": [
+        {
+          "name": "Jackson Wang - Made Me a Man (Official Music Video)",
+          "value": 40129974
+        }
+      ]
+    },
+    {
+      "name": "David Guetta",
+      "children": [
+        {
+          "name": "David Guetta & Sia - Beautiful People (Official Video)",
+          "value": 41075369
+        },
+        {
+          "name": "David Guetta & OneRepublic - I Don't Wanna Wait (Official Video)",
+          "value": 108529744
+        },
+        {
+          "name": "David Guetta, Alphaville & Ava Max - Forever Young (Official Music Video)",
+          "value": 18154200
+        }
+      ]
+    },
+    {
+      "name": "The Weeknd",
+      "children": [
+        {
+          "name": "The Weeknd - São Paulo (Official Music Video)",
+          "value": 48615120
+        },
+        {
+          "name": "The Weeknd - Cry For Me (Official Music Video)",
+          "value": 40322577
+        },
+        {
+          "name": "The Weeknd - Open Hearts (Official Video)",
+          "value": 23070337
+        }
+      ]
+    },
+    {
+      "name": "RAAHiiM",
+      "children": [
+        {
+          "name": "RAAHiiM feat. BEAM - WiiCKEDEST (Official Visualizer)",
+          "value": 188724
+        }
+      ]
+    },
+    {
+      "name": "Drake",
+      "children": [
+        {
+          "name": "Drake - NOKIA (Official Music Video)",
+          "value": 39114736
+        }
+      ]
+    },
+    {
+      "name": "Tate McRae",
+      "children": [
+        {
+          "name": "Tate McRae - Sports car (Official Video)",
+          "value": 34091789
+        },
+        {
+          "name": "Tate McRae - Just Keep Watching (From F1® The Movie) (Official Video)",
+          "value": 36141339
+        },
+        {
+          "name": "Tate McRae - It's ok I'm ok (Official Video)",
+          "value": 55388007
+        },
+        {
+          "name": "Tate McRae - Revolving door (Official Video)",
+          "value": 30012095
+        }
+      ]
+    },
+    {
+      "name": "GIVĒON",
+      "children": [
+        {
+          "name": "GIVĒON - RATHER BE (Official Music Video)",
+          "value": 3794711
+        }
+      ]
+    },
+    {
+      "name": "Benson Boone",
+      "children": [
+        {
+          "name": "Benson Boone - Slow It Down (Official Music Video)",
+          "value": 85513596
+        },
+        {
+          "name": "Benson Boone - Mystical Magical (Official Lyric Video)",
+          "value": 30192542
+        }
+      ]
+    },
+    {
+      "name": "Charli xcx",
+      "children": [
+        {
+          "name": "Charli xcx - Guess featuring billie eilish (official video)",
+          "value": 79002814
+        }
+      ]
+    },
+    {
+      "name": "Taylor Swift",
+      "children": [
+        {
+          "name": "Taylor Swift - Fortnight (feat. Post Malone) (Official Music Video)",
+          "value": 158325692
+        }
+      ]
+    },
+    {
+      "name": "Vex Prince",
+      "children": [
+        {
+          "name": "Vex Prince - MONEY feat Dorty (Official Music Video)",
+          "value": 899024
+        }
+      ]
+    },
+    {
+      "name": "d4vd",
+      "children": [
+        {
+          "name": "d4vd - Feel It (Official Music Video)",
+          "value": 37464367
+        }
+      ]
+    },
+    {
+      "name": "Damiano David",
+      "children": [
+        {
+          "name": "Damiano David - Born With a Broken Heart (Official Video)",
+          "value": 38500113
+        }
+      ]
+    },
+    {
+      "name": "DGB Media",
+      "children": [
+        {
+          "name": "Nelly Wap ""Up Next"" (Off The Porch Live Performance)",
+          "value": 4637
+        }
+      ]
+    },
+    {
+      "name": "SHOOP",
+      "children": [
+        {
+          "name": "SHOOP - CAPRIS (Official Music Video)",
+          "value": 37164
+        }
+      ]
+    },
+    {
+      "name": "Miley Cyrus",
+      "children": [
+        {
+          "name": "Miley Cyrus - End of the World (Official Video)",
+          "value": 29225841
+        }
+      ]
+    },
+    {
+      "name": "Ravyn Lenae",
+      "children": [
+        {
+          "name": "Ravyn Lenae - Love Me Not (Official Music Video)",
+          "value": 25353734
+        }
+      ]
+    },
+    {
+      "name": "Addison Rae",
+      "children": [
+        {
+          "name": "Addison Rae - Diet Pepsi (Official Video)",
+          "value": 35211939
+        }
+      ]
+    },
+    {
+      "name": "RyanCollinsVEVO",
+      "children": [
+        {
+          "name": "Ryan Collins - Stars n Stripes (Official Music Video)",
+          "value": 1161
+        }
+      ]
+    },
+    {
+      "name": "Dua Lipa",
+      "children": [
+        {
+          "name": "Dua Lipa - Illusion (Official Music Video)",
+          "value": 80373280
+        }
+      ]
+    },
+    {
+      "name": "ImagineDragons",
+      "children": [
+        {
+          "name": "Imagine Dragons - Take Me To The Beach (feat. Ado) (Official Lyric Video)",
+          "value": 30301956
+        }
+      ]
+    },
+    {
+      "name": "Justin Bieber",
+      "children": [
+        {
+          "name": "Justin Bieber - DAISIES (Audio)",
+          "value": 24709753
+        }
+      ]
+    },
+    {
+      "name": "keshi",
+      "children": [
+        {
+          "name": "keshi - Soft Spot (Official Music Video)",
+          "value": 26261465
+        }
+      ]
+    },
+    {
+      "name": "Tyla",
+      "children": [
+        {
+          "name": "Tyla - PUSH 2 START (Official Music Video)",
+          "value": 111453988
+        },
+        {
+          "name": "Tyla x Wizkid - DYNAMITE (Official Music Video)",
+          "value": 7826393
+        }
+      ]
+    },
+    {
+      "name": "Coldplay",
+      "children": [
+        {
+          "name": "Coldplay - ALL MY LOVE (Official Video)",
+          "value": 46253970
+        }
+      ]
+    },
+    {
+      "name": "Insãne Shinobi",
+      "children": [
+        {
+          "name": "Insãne Shinobi & Johnnie Noct - REVENGE (Official Music Video)",
+          "value": 6174
+        }
+      ]
+    },
+    {
+      "name": "Claudia Valentina",
+      "children": [
+        {
+          "name": "Claudia Valentina - Candy (Official Video)",
+          "value": 667846
+        }
+      ]
+    },
+    {
+      "name": "Maroon 5",
+      "children": [
+        {
+          "name": "Maroon 5 - Priceless ft. LISA (Official Video)",
+          "value": 29890943
+        }
+      ]
+    },
+    {
+      "name": "Dean Lewis",
+      "children": [
+        {
+          "name": "Dean Lewis - With You (Official Video)",
+          "value": 30313088
+        }
+      ]
+    },
+    {
+      "name": "Roy Woods",
+      "children": [
+        {
+          "name": "Roy Woods - You (Official Music Video)",
+          "value": 125528
+        }
+      ]
+    }
+  ]
+}

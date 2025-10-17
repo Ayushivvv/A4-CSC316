@@ -3,12 +3,13 @@
 <title>Zoomable circle packing</title>
 <link rel="stylesheet" type="text/css" href="css/inspector.css">
 <body>
+<script src="https://d3js.org/d3.v7.min.js"></script>
 <script type="module">
 
-import define from "./js/index.js";
-import {Runtime, Library, Inspector} from "./runtime.js";
+    import define from "./js/index.js";
+    import {Runtime, Library, Inspector} from "./runtime.js";
 
-const runtime = new Runtime();
-const main = runtime.module(define, Inspector.into(document.body));
+    const runtime = new Runtime();
+    const main = runtime.module(define, Inspector.into(document.body));
 
 </script>
