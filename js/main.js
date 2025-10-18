@@ -44,15 +44,15 @@ function createChart(d3, data) {
 
     titleGroup.append("text")
         .text("Youtube Top 100 Games")
-        .style("font-size", "36px")
+        .style("font-size", "50px")
         .style("font-weight", "bold")
         .style("fill", "#111");  // same dark fill as depth=1 labels
 
     titleGroup.append("text")
         .text("By: Alisa, Ayushi, and Jonathan")
         .attr("dy", "2.5em")
-        .style("font-size", "20px")
-        .style("fill", "#444");  // same lighter fill as song labels
+        .style("font-size", "35px")
+        .style("fill", "#000000");  // same lighter fill as song labels
 
     // Reposition some child nodes
     root.each(d => {
