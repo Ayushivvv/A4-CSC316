@@ -15,7 +15,7 @@ function renderChart(d3, data) {
         var colour_in = "hsla(235, 48%, 43%, 1.00)";
 
         var height = window.innerHeight;
-        var width = window.innerWidth / 1.2;
+        var width = window.innerWidth/1.2;
 
         // Create the color scale.
         const color = d3.scaleLinear()
