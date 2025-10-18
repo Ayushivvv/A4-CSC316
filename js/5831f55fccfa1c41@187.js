@@ -1,10 +1,10 @@
 function createChart(d3, data) {
     // Specify the chart’s dimensions.
-    var bg = "hsla(97, 49%, 68%, 1.00)"
-    var colour_in = "hsla(235, 48%, 43%, 1.00)"
+    var bg = "hsla(97, 49%, 68%, 1.00)";
+    var colour_in = "hsla(235, 48%, 43%, 1.00)";
 
     var height = window.innerHeight;
-    var width = window.innerWidth /1.2;
+    var width = window.innerWidth / 1.2;
 
     // Create the color scale.
     const color = d3.scaleLinear()
@@ -22,25 +22,6 @@ function createChart(d3, data) {
 
     const root = pack(data);
 
-    root.each(d => {
-        if (d.children && d.children.length === 2) {
-            const [a, b] = d.children;
-            const offset = a.r + b.r + 10;
-            a.x = d.x;
-            b.x = d.x;
-            a.y = d.y - offset / 2;
-            b.y = d.y + offset / 2;
-        }
-        if (d.children && d.children.length === 4) {
-            const [a, b] = d.children;
-            const offset = a.r + b.r + 10;
-            a.x = d.x - 20;
-            b.x = d.x +20;
-            a.y = d.y - offset / 4;
-            b.y = d.y + offset / 4;
-        }
-    });
-
     // changing the background as well
     d3.select("body").style("background-color", bg);
 
@@ -55,6 +36,43 @@ function createChart(d3, data) {
              margin: auto; 
              background: ${color(0)}; 
              cursor: pointer;`);
+
+    // Add centered title + subtitle
+    const titleGroup = svg.append("g")
+        .attr("text-anchor", "middle")
+        .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+    titleGroup.append("text")
+        .text("Youtube Top 100 Games")
+        .style("font-size", "36px")
+        .style("font-weight", "bold")
+        .style("fill", "#111");  // same dark fill as depth=1 labels
+
+    titleGroup.append("text")
+        .text("By: Alisa, Ayushi, and Jonathan")
+        .attr("dy", "2.5em")
+        .style("font-size", "20px")
+        .style("fill", "#444");  // same lighter fill as song labels
+
+    // Reposition some child nodes
+    root.each(d => {
+        if (d.children && d.children.length === 2) {
+            const [a, b] = d.children;
+            const offset = a.r + b.r + 10;
+            a.x = d.x;
+            b.x = d.x;
+            a.y = d.y - offset / 2;
+            b.y = d.y + offset / 2;
+        }
+        if (d.children && d.children.length === 4) {
+            const [a, b] = d.children;
+            const offset = a.r + b.r + 10;
+            a.x = d.x - 20;
+            b.x = d.x + 20;
+            a.y = d.y - offset / 4;
+            b.y = d.y + offset / 4;
+        }
+    });
 
     // Append the nodes.
     const node = svg.append("g")
@@ -79,8 +97,8 @@ function createChart(d3, data) {
         .style("display", d => d.parent === root ? "inline" : "none")
         .text(d => d.data.name)
         .style("font-size", d => {
-            if (d.depth === 0) return "10px";  // root (big)
-            if (d.depth === 1) return "18px";  // artist
+            if (d.depth === 0) return "10px";   // root
+            if (d.depth === 1) return "18px";   // artist
             return "27px";                      // songs
         })
         .style("font-weight", d => d.depth === 1 ? "bold" : "normal")
@@ -88,8 +106,7 @@ function createChart(d3, data) {
         .text(d => d.data.name).each(function (d) {
             const textWidth = this.getComputedTextLength();
             if (textWidth > d.r * 1.8) d3.select(this).style("display", "none");
-        })
-        ;
+        });
 
     // Create the zoom behavior and zoom immediately in to the initial focus node.
     svg.on("click", (event) => zoom(event, root));
