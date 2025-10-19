@@ -55,7 +55,7 @@ function renderChart(d3, data) {
             .attr("transform", `translate(${width / 2}, ${height / 2})`);
 
         titleGroup.append("text")
-            .text("Youtube Top 100 Games")
+            .text("Youtube Top 100 Music Videos")
             .style("font-size", "50px")
             .style("font-weight", "bold")
             .style("fill", "#111"); 
