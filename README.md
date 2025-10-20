@@ -6,7 +6,7 @@
 
 ## Overview
 This project is our prototype submission for **Assignment 4: Interactive Visualization (CSC316)**.
-We chose to visualize the **YouTube Top 100 Songs (2025)** dataset. Each song is associated with its artist/channel and view count. We represent this data hierarchically, allowing users to explore relationships between artists and their songs, as well as the relative popularity of each. The overall question we sought to answer was "How are the most popular YouTube songs of 2025 distributed across artists, and which artists dominate the Top 100 in terms of number of songs and total views?
+We chose to visualize the **YouTube Top 100 Songs (2025)** dataset. Each song is associated with its artist/channel and view count. We represent this data hierarchically, allowing users to explore relationships between artists and their songs, as well as the relative popularity of each. The overall question we sought to answer was "How are the most popular YouTube songs of 2025 distributed across artists, and which artists dominate the Top 100 in terms of number of songs and total views?"
 
 
 ---
