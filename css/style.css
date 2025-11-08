@@ -1,4 +1,5 @@
 :root {
+    --font: "Fira Sans Condensed", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     --bg: #ffffff;
     --text: #111;
     --muted: #f6f7f9;
@@ -22,8 +23,7 @@ body {
     margin: 0;
 }
 body {
-    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto,
-    "Helvetica Neue", Arial, sans-serif;
+    font-family: var(--font);
     color: var(--text);
     background: var(--bg);
     -webkit-font-smoothing: antialiased;
