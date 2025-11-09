@@ -1,0 +1,112 @@
+:root {
+    --font: "Fira Sans Condensed", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    --bg: #ffffff;
+    --text: #111;
+    --muted: #f6f7f9;
+    --border: #ececec;
+
+    /* youtube red palette */
+    --primary: #da0d0d;
+    --primary-dark: #d82e32;
+
+    --radius: 20px;
+    --shadow: 0 12px 40px rgba(16, 24, 40, 0.08);
+}
+
+/* Reset & base */
+* {
+    box-sizing: border-box;
+}
+html,
+body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    font-family: var(--font);
+    color: var(--text);
+    background: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+}
+
+/* Header */
+.site-header {
+    text-align: center;
+    padding: 28px 16px 8px;
+    border-bottom: 1px solid var(--border);
+    background: #fff;
+}
+.page-title {
+    margin: 0;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: clamp(28px, 4.8vw, 48px);
+}
+.page-byline {
+    margin: 10px 0 0;
+    color: #111;
+    font-weight: 600;
+    font-size: clamp(30px, 2.2vw, 18px);
+}
+
+/* Visualization layout */
+.site-main {
+    padding: 16px;
+    background: transparent;
+}
+#viz {
+    width: 100%;
+    height: calc(100vh - 100px); /* <-- This line was changed */
+    min-height: 800px;          /* <-- This line was changed */
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin: 0 auto;
+}
+#viz svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* Tooltip styling (used in main.js) */
+#viz-tooltip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 20;
+    padding: 6px 10px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    border-radius: 8px;
+    font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    sans-serif;
+    font-size: 12px;
+    line-height: 1.2;
+    transform: translate(8px, 8px);
+    display: none;
+    max-width: 320px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    white-space: normal;
+}
+
+/* Labels */
+.d3-label {
+    font-family: inherit;
+    fill: var(--text);
+    font-weight: 600;
+}
+.d3-label.depth-1 {
+    font-weight: 700;
+}
+
+/* Hover highlight for circles */
+#viz circle:hover {
+    stroke: var(--primary-dark);
+    stroke-width: 1.5px;
+    filter: brightness(1.05);
+    transition: stroke 0.2s ease, filter 0.2s ease;
+}
