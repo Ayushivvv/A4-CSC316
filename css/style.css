@@ -58,8 +58,8 @@ body {
 }
 #viz {
     width: 100%;
-    height: calc(100vh - 150px);
-    min-height: 640px;
+    height: calc(100vh - 100px); /* <-- This line was changed */
+    min-height: 800px;          /* <-- This line was changed */
     background: var(--muted);
     border: 1px solid var(--border);
     border-radius: var(--radius);
