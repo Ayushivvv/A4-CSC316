@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<title>Zoomable circle packing</title>
-<link rel="stylesheet" type="text/css" href="css/inspector.css">
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>YouTubes Top 100 Music Videos in 2025</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/inspector.css" />
+</head>
 <body>
+
+<header class="site-header">
+    <h1 class="page-title">YouTubes Top 100 Music Videos in 2025</h1>
+    <p class="page-byline">B: Alisa, Ayushi, and Jonathan</p>
+</header>
+
 <div id="controls" style="margin-bottom: 20px; font-family: sans-serif; padding: 10px;">
-    <h1>Youtube Top 100 Songs</h1>
-    <h4>By: Alisa, Ayushi, and Jonathan</h4>
     <div style="margin-bottom: 10px;">
         <label for="filter-metric-selector">Data:</label>
         <select id="filter-metric-selector" style="width: 150px;">
@@ -14,7 +26,7 @@
             <option value="duration">Duration (sec)</option>
             <option value="none">None (No Quantitative Filter)</option>
         </select>
-        
+
         <label for="category-filter" style="margin-left: 15px;">Category:</label>
         <select id="category-filter" style="width: 150px;">
             <option value="All" selected>All (No Category Filter)</option>
@@ -28,10 +40,16 @@
             <option value="TRUE">Live</option>
             <option value="FALSE" selected>Not Live</option>
         </select>
-        
+
         <button id="apply-filter" style="margin-left: 15px; padding: 5px 10px;">Apply Filter</button>
     </div>
 </div>
-<script src="https://d3js.org/d3.v7.min.js"></script>
+
+<main class="site-main">
+    <section id="viz" aria-label="Zoomable circle packing visualization"></section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="js/main.js"></script>
 </body>
+</html>
