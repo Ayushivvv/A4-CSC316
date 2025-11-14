@@ -55,11 +55,11 @@ function renderChart(d3, data) {
             .attr("width", width)
             .attr("height", height)
             .attr("style", `max-width:100%;
-                 height: ${height}px;
-                 display: block; 
-                 margin: auto; 
-                 background: transparent; 
-                 cursor: pointer;`);
+                  height: ${height}px;
+                  display: block; 
+                  margin: auto; 
+                  background: transparent; 
+                  cursor: pointer;`);
 
         // Reposition some child nodes (Original logic)
         root.each(d => {
