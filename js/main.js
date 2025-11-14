@@ -1,7 +1,9 @@
 // A global variable to hold the hierarchical data
 let chartData = null;
+// A global variable to hold the original flat CSV data
+let originalFlatData = null;
 
-// rendering function
+// rendering function (remains the same as before)
 function renderChart(d3, data) {
     const mount = document.getElementById("viz");
     if (!mount) return;
@@ -79,7 +81,7 @@ function renderChart(d3, data) {
             }
         });
 
-        // Append the nodes.
+        // Add a circle for each node.
         const node = svg.append("g")
             .selectAll("circle")
             .data(root.descendants().slice(1))
@@ -107,8 +109,9 @@ function renderChart(d3, data) {
                 if (focus !== d) (zoom(event, d), event.stopPropagation());
             });
 
-        // Append the text labels.
+        // Add a label for each node.
         const label = svg.append("g")
+            .style("font", "10px sans-serif")
             .attr("pointer-events", "none")
             .attr("text-anchor", "middle")
             .selectAll("text")
@@ -203,10 +206,11 @@ function renderChart(d3, data) {
     mount.appendChild(chart);
 }
 
-// Load and process the CSV data
-d3.csv("data/youtube-top-100-songs-2025.csv").then(flatData => {
+
+// New function to process flat data into hierarchical data and render the chart
+function processAndRender(d3, dataToProcess, metricForValue) {
     // Group data by channel (artist)
-    const grouped = d3.group(flatData, d => d.channel);
+    const grouped = d3.group(dataToProcess, d => d.channel);
 
     // Convert flat CSV to hierarchical structure for the chart
     chartData = {
@@ -215,13 +219,57 @@ d3.csv("data/youtube-top-100-songs-2025.csv").then(flatData => {
             name: key,
             children: values.map(d => ({
                 name: d.title,
-                value: +d.view_count
+                // FIX: Use the selected metricForValue to set the size of the bubble
+                value: +d[metricForValue]
             }))
         }))
     };
 
-    // Initial chart render
+    // Chart render
     renderChart(d3, chartData);
+}
+
+// New filtering function
+function applyFiltersAndRender(d3) {
+    if (!originalFlatData) return;
+
+    // 1. Get filter values from UI
+    const filterMetric = document.getElementById('filter-metric-selector').value;
+    const categoryFilter = document.getElementById('category-filter').value;
+    const liveStatusFilter = document.getElementById('live-status-filter').value;
+
+    // 2. Apply filters
+    let filteredData = originalFlatData.filter(d => {
+        // Quantitative filter (dynamic)
+        if (filterMetric !== 'none') {
+            // Filter out any row where the value for that metric is 0 or less.
+            // This also handles invalid/empty data for the selected metric.
+            if (+d[filterMetric] <= 0 || isNaN(+d[filterMetric])) return false;
+        }
+
+        // Categorical filter (Dropdown filter based on substring match)
+        if (categoryFilter !== 'All') {
+            // Check if the row's categories field does NOT contain the selected category string (case-insensitive)
+            if (d.categories && d.categories.toLowerCase().indexOf(categoryFilter.toLowerCase()) === -1) return false;
+        }
+
+        // Boolean filter ('live_status' column is a string "TRUE" or "FALSE")
+        if (liveStatusFilter !== 'All' && d.live_status !== liveStatusFilter) return false;
+
+        return true;
+    });
+
+    // 3. Process and Render - PASS THE METRIC
+    processAndRender(d3, filteredData, filterMetric);
+}
+
+// Load and process the CSV data
+d3.csv("data/youtube-top-100-songs-2025.csv").then(flatData => {
+    // Store the original data globally
+    originalFlatData = flatData;
+
+    // Initial chart render (calling the filter function to apply any default filters from the HTML)
+    applyFiltersAndRender(d3);
 
     // Add the resize event listener
     let resizeTimer;
@@ -229,9 +277,14 @@ d3.csv("data/youtube-top-100-songs-2025.csv").then(flatData => {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
             if (chartData) {
-                // Re-render the entire chart
+                // Rerender with the current chartData on resize
                 renderChart(d3, chartData);
             }
-        }, 200); // Wait 200ms
+        }, 150);
+    });
+
+    // Add event listener for the filter button
+    document.getElementById('apply-filter').addEventListener('click', () => {
+        applyFiltersAndRender(d3);
     });
 });
