@@ -5,25 +5,39 @@ let originalFlatData = null;
 
 // rendering function (remains the same as before)
 function renderChart(d3, data) {
+    const mount = document.getElementById("viz");
+    if (!mount) return;
+
     // Remove the existing SVG element ==> clear state
-    d3.select("body").select("svg").remove();
+    d3.select(mount).select("svg").remove();
+
+    // One-time HTML tooltip (styled in css as #viz-tooltip)
+    let tip = document.getElementById("viz-tooltip");
+    if (!tip) {
+        tip = document.createElement("div");
+        tip.id = "viz-tooltip";
+        document.body.appendChild(tip);
+    }
+    const showTip = (text, x, y) => {
+        tip.textContent = text;
+        tip.style.left = `${x}px`;
+        tip.style.top = `${y}px`;
+        tip.style.display = "block";
+    };
+    const hideTip = () => (tip.style.display = "none");
+
 
     // Define core chart creation logic (shifting within rendering)
     function createChart(d3, data) {
         // Specify the chart’s dimensions. (These change on resize)
+        const rect = mount.getBoundingClientRect();
+        const width = Math.max(360, rect.width);
+        const height = Math.max(480, rect.height);
 
-        // colours
-        var bg = "hsla(97, 49%, 68%, 1.00)";
-        var colour_in = "hsla(235, 48%, 43%, 1.00)";
-
-        var height = window.innerHeight;
-        var width = window.innerWidth / 1.2;
-
-        // Create the color scale.
-        const color = d3.scaleLinear()
-            .domain([0, 5])
-            .range([bg, colour_in])
-            .interpolate(d3.interpolateHcl);
+        // colours (from new CSS)
+        const RED = "#ff4d4f";
+        const RED_STROKE = "#ff6b6b";
+        const WHITE = "#ffffff";
 
         // Compute the layout. ( relies on new width/height)
         const pack = data => d3.pack()
@@ -35,29 +49,65 @@ function renderChart(d3, data) {
 
         const root = pack(data);
 
-        // changing the background as well
-        d3.select("body").style("background-color", bg);
-
         // Create the SVG container.
-
         const svg = d3.create("svg")
-            .attr("viewBox", `-${width / 2}, -${height / 2}, ${width}, ${height}`)
-            .style("display", "block")
-            .style("margin", "0 -14px")
-            .style("background", bg)
-            .style("cursor", "pointer")
-            .on("click", (event) => zoom(event, root));
+            .attr("viewBox", `-${width} -${height} ${width * 2} ${height * 2}`) // Zoom-out change
+            .attr("width", width)
+            .attr("height", height)
+            .attr("style", `max-width:100%;
+                  height: ${height}px;
+                  display: block; 
+                  margin: auto; 
+                  background: transparent; 
+                  cursor: pointer;`);
+
+        // Reposition some child nodes (Original logic)
+        root.each(d => {
+            if (d.children && d.children.length === 2) {
+                const [a, b] = d.children;
+                const offset = a.r + b.r + 10;
+                a.x = d.x;
+                b.x = d.x;
+                a.y = d.y - offset / 2;
+                b.y = d.y + offset / 2;
+            }
+            if (d.children && d.children.length === 4) {
+                const [a, b] = d.children;
+                const offset = a.r + b.r + 10;
+                a.x = d.x - 20;
+                b.x = d.x + 20;
+                a.y = d.y - offset / 4;
+                b.y = d.y + offset / 4;
+            }
+        });
 
         // Add a circle for each node.
         const node = svg.append("g")
             .selectAll("circle")
             .data(root.descendants().slice(1))
             .join("circle")
-            .attr("fill", d => d.children ? color(d.depth) : "white")
-            .attr("pointer-events", "all") // Keep all interactive
-            .on("mouseover", function () { d3.select(this).attr("stroke", "#000"); })
-            .on("mouseout", function () { d3.select(this).attr("stroke", null); })
-            .on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
+            .attr("transform", d => `translate(${d.x},${d.y})`)
+            .attr("fill", d => (d.children ? RED : WHITE)) // New colors
+            .attr("stroke", d => (d.children ? WHITE : RED_STROKE)) // New stroke
+            .attr("stroke-width", 1) // New stroke-width
+            .attr("pointer-events", d => !d.children ? "none" : null)
+            .on("mouseover", function (event, d) {
+                d3.select(this).attr("stroke", "#000");
+                // Show tooltip logic
+                if (d.depth === 1 && focus === root) {
+                    showTip(d.data.name, event.clientX, event.clientY);
+                }
+            })
+            .on("mouseout", function () {
+                d3.select(this).attr("stroke", null);
+                // Hide tooltip logic
+                hideTip();
+            })
+            .on("click", (event, d) => {
+                // Hide tooltip on click
+                hideTip();
+                if (focus !== d) (zoom(event, d), event.stopPropagation());
+            });
 
         // Add a label for each node.
         const label = svg.append("g")
@@ -71,54 +121,89 @@ function renderChart(d3, data) {
             .style("display", d => d.parent === root ? "inline" : "none")
             .text(d => d.data.name)
             .style("font-size", d => {
-                if (d.depth === 0) return "5px";
-                if (d.depth === 1) return "10px";
-                return "8px";
+                if (d.depth === 0) return "10px"; // Root
+                if (d.depth === 1) return "24px"; // Artist
+                return "27px"; // Song
             })
             .style("font-weight", d => d.depth === 1 ? "bold" : "normal")
-            .style("fill", d => d.depth === 1 ? "#111" : "#444")
+            // --- Styles for readability ---
+            .style("fill", d => {
+                if (d.depth === 2) return "#000"; // Songs = black
+                if (d.depth === 1) return "#111"; // Artists = dark
+                return "#444"; // Root = gray
+            })
+            .style("stroke", d => d.depth === 2 ? "#fff" : "none") // White stroke for songs
+            .style("stroke-width", d => d.depth === 2 ? "3px" : "0px") // 3px stroke for songs
+            .style("paint-order", "stroke") // Paint stroke behind fill
+            // --- End of new styles ---
             .text(d => d.data.name).each(function (d) {
 
                 const textWidth = this.getComputedTextLength();
                 if (textWidth > d.r * 1.8) d3.select(this).style("display", "none");
             });
 
-        // Create the zoom behavior and zoom immediately in to the initial focus node.
+        // Create the zoom behavior and zoom immediately in to the initial focus node. (Original logic)
         svg.on("click", (event) => zoom(event, root));
         let focus = root;
         let view;
         zoomTo([focus.x, focus.y, focus.r * 2]);
 
         function zoomTo(v) {
-            const k = width / v[2];
+            // --- THIS IS THE MODIFIED LINE ---
+            const k = Math.min(width, height) * 2 / v[2];
+            // --- END OF MODIFIED LINE ---
+
             view = v;
             label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
             node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
             node.attr("r", d => d.r * k);
         }
 
+        // --- THIS IS THE MODIFIED ZOOM FUNCTION ---
         function zoom(event, d) {
-            focus = d;
+            // 1. If clicking on the same spot, do nothing
+            if (focus === d) return;
+
+            focus = d; // Set new focus
+
+            // 2. Immediately hide all currently visible labels
+            label
+                .filter(function() { return this.style.display === "inline"; })
+                .style("fill-opacity", 0)
+                .style("display", "none");
+
+            // 3. Start the zoom transition for circles and labels
             const transition = svg.transition()
-                .duration(event.altKey ? 7500 : 750)
+                .duration(event.altKey ? 5500 : 500)
                 .tween("zoom", d => {
                     const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
                     return t => zoomTo(i(t));
                 });
-            label
-                .filter(function (d) { return d.parent === focus || this.style.display === "inline"; })
-                .transition(transition)
-                .style("fill-opacity", d => d.parent === focus ? 1 : 0)
-                .on("start", function (d) { if (d.parent === focus) this.style.display = "inline"; })
-                .on("end", function (d) { if (d.parent !== focus) this.style.display = "none"; });
+
+            // 4. At the end of the zoom, show the new labels
+            transition.on("end", () => {
+                // After zoom is complete, show the new labels
+                label
+                    .filter(function(d) { return d.parent === focus; }) // Get new labels
+                    .style("display", "inline") // Set to display
+                    .style("fill-opacity", 0) // Start invisible
+                    .transition().duration(50) // FASTER fade-in
+                    .style("fill-opacity", 1);
+
+                // Ensure old labels are definitely hidden
+                label
+                    .filter(function(d) { return d.parent !== focus; })
+                    .style("display", "none");
+            });
         }
+        // --- END OF MODIFIED ZOOM FUNCTION ---
 
         return svg.node();
     }
 
-    // Append the newly created chart to the body
+    // Append the newly created chart to the #viz mount point
     const chart = createChart(d3, data);
-    document.body.appendChild(chart);
+    mount.appendChild(chart);
 }
 
 
@@ -135,7 +220,7 @@ function processAndRender(d3, dataToProcess, metricForValue) {
             children: values.map(d => ({
                 name: d.title,
                 // FIX: Use the selected metricForValue to set the size of the bubble
-                value: +d[metricForValue] 
+                value: +d[metricForValue]
             }))
         }))
     };
