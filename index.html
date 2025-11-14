@@ -11,39 +11,10 @@
     <link rel="stylesheet" href="css/inspector.css" />
 </head>
 <body>
-
 <header class="site-header">
     <h1 class="page-title">YouTubes Top 100 Music Videos in 2025</h1>
     <p class="page-byline">B: Alisa, Ayushi, and Jonathan</p>
 </header>
-
-<div id="controls" style="margin-bottom: 20px; font-family: sans-serif; padding: 10px;">
-    <div style="margin-bottom: 10px;">
-        <label for="filter-metric-selector">Data:</label>
-        <select id="filter-metric-selector" style="width: 150px;">
-            <option value="view_count" selected>Views</option>
-            <option value="channel_follower_count">Channel Followers</option>
-            <option value="duration">Duration (sec)</option>
-            <option value="none">None (No Quantitative Filter)</option>
-        </select>
-
-        <label for="category-filter" style="margin-left: 15px;">Category:</label>
-        <select id="category-filter" style="width: 150px;">
-            <option value="All" selected>All (No Category Filter)</option>
-            <option value="Music">Music</option>
-            <option value="People & Blogs">People & Blogs</option>
-        </select>
-
-        <label for="live-status-filter" style="margin-left: 15px;">Live Status:</label>
-        <select id="live-status-filter" style="width: 100px;">
-            <option value="All">All</option>
-            <option value="TRUE">Live</option>
-            <option value="FALSE" selected>Not Live</option>
-        </select>
-
-        <button id="apply-filter" style="margin-left: 15px; padding: 5px 10px;">Apply Filter</button>
-    </div>
-</div>
 
 <main class="site-main">
     <section id="viz" aria-label="Zoomable circle packing visualization"></section>
