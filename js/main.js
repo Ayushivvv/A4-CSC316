@@ -1,4 +1,4 @@
-// A4-CSC3161/js/main.js
+// A4-CSC3G1/js/main.js
 
 // A global variable to hold the hierarchical data
 let chartData = null;
@@ -476,7 +476,7 @@ function applyFiltersAndRender(d3) {
     // 1. Get filter values from UI
     const filterMetric = document.getElementById('filter-metric-selector').value;
     const categoryFilter = document.getElementById('category-filter').value;
-    const liveStatusFilter = document.getElementById('live-status-filter').value;
+    const genreFilter = document.getElementById('genre-filter').value; // <-- MODIFIED
 
     // 2. Apply filters
     let filteredData = originalFlatData.filter(d => {
@@ -493,8 +493,8 @@ function applyFiltersAndRender(d3) {
             if (d.categories && d.categories.toLowerCase().indexOf(categoryFilter.toLowerCase()) === -1) return false;
         }
 
-        // Boolean filter ('live_status' column is a string "TRUE" or "FALSE")
-        if (liveStatusFilter !== 'All' && d.live_status !== liveStatusFilter) return false;
+        // Genre filter (Exact match)
+        if (genreFilter !== 'All' && d.genre !== genreFilter) return false; // <-- MODIFIED
 
         return true;
     });
