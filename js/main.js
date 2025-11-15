@@ -1,3 +1,5 @@
+// A4-CSC3161/js/main.js
+
 // A global variable to hold the hierarchical data
 let chartData = null;
 // A global variable to hold the original flat CSV data
@@ -90,12 +92,37 @@ function renderChart(d3, data) {
         // Compute the layout. ( relies on new width/height)
         const pack = data => d3.pack()
             .size([width, height])
-            .padding(30)
+            .padding(31)
             (d3.hierarchy(data)
-                .sum(d => d.value)
+                .sum(d => d.value) // This sum works because of the logic in processAndRender
                 .sort((a, b) => b.value - a.value));
 
         const root = pack(data);
+
+        // --- START OF MODIFICATION (Dynamic Font Scale) ---
+        // Find the min and max radius for song circles (depth 2)
+        const songCircles = root.descendants().filter(d => d.depth === 2);
+
+        // --- FIX for empty filtered data ---
+        let minRadius = 10, maxRadius = 50; // Default values
+        if (songCircles.length > 0) {
+            const [minR, maxR] = d3.extent(songCircles, d => d.r);
+            minRadius = minR;
+            maxRadius = maxR;
+        }
+        // --- END OF FIX ---
+
+        // Define the desired font size range
+        const maxFontSize = 30; // The original max size
+        const minFontSize = maxFontSize * 0.75; // 50% smaller as requested (13.5px)
+
+        // Create a linear scale to map radius to font size
+        const songFontSizeScale = d3.scaleLinear()
+            .domain([minRadius, maxRadius])
+            .range([minFontSize, maxFontSize])
+            .clamp(true); // Clamp to ensure font size doesn't go out of bounds
+        // --- END OF MODIFICATION ---
+
 
         // Create the SVG container.
         const svg = d3.create("svg")
@@ -103,7 +130,7 @@ function renderChart(d3, data) {
             .attr("width", width)
             .attr("height", height)
             .attr("style", `max-width:100%;
-                  height: ${height}px;
+                  height: ${height}px; 
                   display: block; 
                   margin: auto; 
                   background: transparent; 
@@ -125,11 +152,6 @@ function renderChart(d3, data) {
             // --- End of Modifications ---
             .attr("stroke-width", 1)
 
-            // --- THIS IS THE FIX ---
-            // The line below was removed, as it was disabling mouse events on the song circles.
-            // .attr("pointer-events", d => !d.children ? "none" : null)
-            // --- END OF FIX ---
-
             // --- MODIFICATION 3: Update mouseover logic ---
             .on("mouseover", function (event, d) {
                 d3.select(this).attr("stroke", "#000"); // Use black stroke for hover highlight
@@ -137,7 +159,39 @@ function renderChart(d3, data) {
                 // Show tooltip logic
                 if (d.depth === 1 && focus === root) {
                     // Artist hover (zoomed out)
-                    showTip(d.data.name, event.clientX, event.clientY);
+
+                    // --- START OF REPLACEMENT ---
+
+                    // Format follower count
+                    const followers = d.data.followerCount ? (+d.data.followerCount).toLocaleString() : 'N/A';
+
+                    // Format total views
+                    const totalViewsFormatted = d.data.totalViews ? d.data.totalViews.toLocaleString() : 'N/A';
+
+                    // Format total duration (in seconds)
+                    const totalDurationFormatted = d.data.totalDuration ? d.data.totalDuration.toLocaleString() + ' sec' : 'N/A';
+
+                    // --- START OF NEW MODIFICATION ---
+                    // Format average duration
+                    const avgDurationFormatted = d.data.averageDuration ? d.data.averageDuration.toFixed(1) + ' sec' : 'N/A';
+                    const songCountDisplay = d.data.songCount || 0;
+                    // --- END OF NEW MODIFICATION ---
+
+
+                    // Create HTML string for the artist tooltip
+                    const html = `
+                        <strong style="font-size: 14px; display: block; margin-bottom: 4px;">${d.data.name}</strong>
+                        <div style="font-size: 12px; opacity: 0.9;">
+                            <strong>Followers:</strong> ${followers}<br>
+                            <strong>Total Views:</strong> ${totalViewsFormatted}<br>
+                            <strong>Total Duration:</strong> ${totalDurationFormatted}<br>
+                            <strong>Avg. Duration:</strong> ${avgDurationFormatted} (${songCountDisplay} ${songCountDisplay === 1 ? 'song' : 'songs'})
+                        </div>
+                    `;
+                    showTip(html, event.clientX, event.clientY);
+
+                    // --- END OF REPLACEMENT ---
+
                 } else if (d.depth === 2 && d.parent === focus) {
                     // Song hover (zoomed in)
 
@@ -223,22 +277,32 @@ function renderChart(d3, data) {
             .style("fill-opacity", d => d.parent === root ? 1 : 0)
             .style("display", d => d.parent === root ? "inline" : "none")
             .text(d => d.data.name)
+            // --- START OF MODIFICATION (Dynamic Font Size & Artist Readability) ---
             .style("font-size", d => {
                 if (d.depth === 0) return "10px"; // Root
                 if (d.depth === 1) return "24px"; // Artist
-                return "27px"; // Song
+                if (d.depth === 2) return `${songFontSizeScale(d.r)}px`; // Dynamic song font size
+                return "10px"; // Fallback
             })
             .style("font-weight", d => d.depth === 1 ? "bold" : "normal")
             // --- Styles for readability ---
             .style("fill", d => {
                 if (d.depth === 2) return "#000"; // Songs = black
-                if (d.depth === 1) return "#111"; // Artists = dark
+                if (d.depth === 1) return "#000"; // Artists = black
                 return "#444"; // Root = gray
             })
-            .style("stroke", d => d.depth === 2 ? "#fff" : "none") // White stroke for songs
-            .style("stroke-width", d => d.depth === 2 ? "3px" : "0px") // 3px stroke for songs
+            .style("stroke", d => {
+                if (d.depth === 2) return "#fff"; // Songs = white stroke
+                if (d.depth === 1) return "#fff"; // Artists = white stroke (for readability)
+                return "none";
+            })
+            .style("stroke-width", d => {
+                if (d.depth === 2) return "3px"; // 3px stroke for songs
+                if (d.depth === 1) return "2.5px"; // 2.5px stroke for artists
+                return "0px";
+            })
             .style("paint-order", "stroke") // Paint stroke behind fill
-            // --- End of new styles ---
+            // --- END OF MODIFICATION ---
             .text(d => d.data.name).each(function (d) {
 
                 const textWidth = this.getComputedTextLength();
@@ -318,26 +382,87 @@ function processAndRender(d3, dataToProcess, metricForValue) {
     // Convert flat CSV to hierarchical structure for the chart
     chartData = {
         name: "Youtube Top 100",
-        children: Array.from(grouped, ([key, values]) => ({
-            name: key,
-            // --- MODIFICATION 1: Pass more data into the hierarchy ---
-            children: values.map(d => ({
-                name: d.title,
-                value: +d[metricForValue], // This is for the circle size
-                genre: d.genre,
+        children: Array.from(grouped, ([key, values]) => {
 
-                // --- Add data for tooltip ---
-                thumbnail: d.thumbnail,
-                views: d.view_count, // Use the original view_count for display
-                duration: d.duration_string,
-                tags: d.tags,
+            // --- NEW CALCULATION START ---
+            let totalViews = 0;
+            let totalDuration = 0;
+            const songCount = values.length;
+            const artistFollowers = +values[0].channel_follower_count || 0;
 
-                // --- START OF MODIFICATION (Pass URL to hierarchy) ---
-                url: d.url // Pass the url for the click event
-                // --- END OF MODIFICATION (Pass URL to hierarchy) ---
-            }))
-            // --- END OF MODIFICATION 1 ---
-        }))
+            // Calculate totals for this artist
+            values.forEach(d => {
+                totalViews += +d.view_count || 0;
+                totalDuration += +d.duration || 0; // Use the numeric duration
+            });
+
+            const averageDuration = songCount > 0 ? totalDuration / songCount : 0;
+            // --- NEW CALCULATION END ---
+
+
+            return {
+                name: key,
+                // --- Add all calculated data to the parent node ---
+                followerCount: artistFollowers,
+                totalViews: totalViews,
+                totalDuration: totalDuration,
+                songCount: songCount,
+                averageDuration: averageDuration,
+                // --- END ---
+
+                // --- THIS IS THE CORE LOGIC FIX ---
+                children: values.map(d => {
+
+                    let nodeValue; // This will be the value d3.pack sums
+                    const songViews = +d.view_count || 0;
+                    const songDuration = +d.duration || 0;
+
+                    switch (metricForValue) {
+                        case 'duration':
+                            // PARENT SIZES BY: averageDuration
+                            // We make each song's value a *proportion* of the average.
+                            // (songDuration / totalDuration) * averageDuration
+                            // The sum of nodeValues will equal averageDuration.
+                            nodeValue = (totalDuration > 0)
+                                ? (songDuration / totalDuration) * averageDuration
+                                : 0;
+                            break;
+
+                        case 'channel_follower_count':
+                            // PARENT SIZES BY: artistFollowers
+                            // We size songs *proportionally to their views* to fill the parent bubble.
+                            // (songViews / totalViews) * artistFollowers
+                            // The sum of nodeValues will equal artistFollowers.
+                            nodeValue = (totalViews > 0)
+                                ? (songViews / totalViews) * artistFollowers
+                                : 0;
+                            break;
+
+                        case 'view_count':
+                        default:
+                            // PARENT SIZES BY: totalViews
+                            // The song's value is simply its own view count.
+                            // The sum of nodeValues will equal totalViews.
+                            nodeValue = songViews;
+                            break;
+                    }
+
+                    return {
+                        name: d.title,
+                        value: nodeValue, // <-- This value is used by d3.pack().sum()
+                        genre: d.genre,
+
+                        // --- Add raw data for tooltip ---
+                        thumbnail: d.thumbnail,
+                        views: d.view_count, // Use the original view_count for display
+                        duration: d.duration_string, // Use string for song tooltip
+                        tags: d.tags,
+                        url: d.url
+                    };
+                })
+                // --- END OF CORE LOGIC FIX ---
+            };
+        })
     };
 
     // Chart render
@@ -403,14 +528,15 @@ function updateLegend(d3, filteredData) {
     artistItem.append("span")
         .text("Artist (Parent Circle)");
 
-    // Size Explanations
+    // --- START: Updated Size Explanations ---
     staticKeyMount.append("p")
         .attr("class", "legend-description")
-        .text("Artist circle size represents the total selected metric (e.g., Views) for all their songs.");
+        .text("Artist circle size represents the total 'Views' or 'Channel Followers', OR the 'Average Duration', depending on the filter.");
 
     staticKeyMount.append("p")
         .attr("class", "legend-description")
-        .text("Song circle size represents the metric value for that specific song.");
+        .text("Song circle size represents its share of the parent's total value (e.g., its view count, or its proportion of duration).");
+    // --- END: Updated Size Explanations ---
 
     // --- 2. Add Dynamic Genre Key ---
 
