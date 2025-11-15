@@ -3,6 +3,47 @@ let chartData = null;
 // A global variable to hold the original flat CSV data
 let originalFlatData = null;
 
+// --- START OF MODIFICATION (Hard-coded Global Color Scale) ---
+// Define the domain (all 18 unique genres from the CSV)
+const genreDomain = [
+    'Afrobeats', 'Alternative', 'Alternative Pop', 'Country', 'Country-Pop',
+    'Country-Rap', 'EDM/Pop', 'Electronic', 'Electronic/Disco', 'Hip Hop',
+    'Hyperpop', 'K-Pop', 'Pop', 'Pop-Rock', 'R&B', 'R&B/Funk',
+    'R&B/Pop', 'Soul-Pop'
+];
+
+// Define the hard-coded range of 18 colors
+const genreRange = [
+
+    '#E9B0C8', // Afrobeats ()
+    '#4682B4', // Alternative ()
+    '#FABB57', // Alternative Pop ()
+    '#B8860B', // Country ()
+    '#D76A4C', // Country-Pop ()
+    '#20BD20', // Country-Rap ()
+    '#FADD8B', // EDM/Pop ()
+    '#9400D3', // Electronic ()
+    '#FF1493', // Electronic/Disco ()
+    '#1E90FF', // Hip Hop ()
+    '#A4BDE0', // Hyperpop ()
+    '#55B3CF', // K-Pop ()
+    '#67C7C4', // Pop ()
+    '#E9967A', // Pop-Rock ()
+    '#274F8B', // R&B
+    '#6A5ACD', // R&B/Funk
+    '#25533F', // R&B/Pop
+    '#C9D763' // Soul-Pop
+];
+
+// Create the single global color scale
+// Both renderChart and updateLegend will use this.
+const globalGenreColorScale = d3.scaleOrdinal()
+    .domain(genreDomain)
+    .range(genreRange)
+    .unknown("#808080"); // Fallback for any unknown genres
+// --- END OF MODIFICATION ---
+
+
 // rendering function (remains the same as before)
 function renderChart(d3, data) {
     const mount = document.getElementById("viz");
@@ -42,15 +83,14 @@ function renderChart(d3, data) {
         const RED = "#ff4d4f";
         const WHITE = "#ffffff";
 
-        // --- MODIFICATION 1: Create a color scale for genres ---
-        // This scale will automatically assign a color to each unique genre string.
-        // We're using d3.schemeTableau10, a popular and clear color palette.
-        const color = d3.scaleOrdinal(d3.schemeTableau10);
+        // --- MODIFICATION: Use the new global, hard-coded color scale ---
+        const color = globalGenreColorScale;
+        // --- END OF MODIFICATION ---
 
         // Compute the layout. ( relies on new width/height)
         const pack = data => d3.pack()
             .size([width, height])
-            .padding(24)
+            .padding(30)
             (d3.hierarchy(data)
                 .sum(d => d.value)
                 .sort((a, b) => b.value - a.value));
@@ -68,26 +108,6 @@ function renderChart(d3, data) {
                   margin: auto; 
                   background: transparent; 
                   cursor: pointer;`);
-
-        // Reposition some child nodes (Original logic)
-        root.each(d => {
-            if (d.children && d.children.length === 2) {
-                const [a, b] = d.children;
-                const offset = a.r + b.r + 10;
-                a.x = d.x;
-                b.x = d.x;
-                a.y = d.y - offset / 2;
-                b.y = d.y + offset / 2;
-            }
-            if (d.children && d.children.length === 4) {
-                const [a, b] = d.children;
-                const offset = a.r + b.r + 10;
-                a.x = d.x - 20;
-                b.x = d.x + 20;
-                a.y = d.y - offset / 4;
-                b.y = d.y + offset / 4;
-            }
-        });
 
         // Add a circle for each node.
         const node = svg.append("g")
@@ -131,18 +151,21 @@ function renderChart(d3, data) {
                         tagsDisplay = tags.substring(0, 150) + '...';
                     }
 
+                    // --- START OF MODIFICATION (Genre in Tooltip) ---
                     // Create HTML string for the tooltip
                     const html = `
                         <img src="${d.data.thumbnail}" alt="${d.data.name}" style="width: 100%; max-width: 220px; display: block; margin-bottom: 8px; border-radius: 4px;">
                         <strong style="font-size: 14px; display: block; margin-bottom: 4px;">${d.data.name}</strong>
                         <div style="font-size: 12px; opacity: 0.9;">
                             <strong>Views:</strong> ${views}<br>
-                            <strong>Duration:</strong> ${d.data.duration || 'N/A'}
+                            <strong>Duration:</strong> ${d.data.duration || 'N/A'}<br>
+                            <strong>Genre:</strong> ${d.data.genre || 'N/A'}
                         </div>
                         <div style="font-size: 10px; opacity: 0.7; margin-top: 6px; max-height: 60px; overflow-y: auto; border-top: 1px solid #444; padding-top: 4px;">
                             <strong>Tags:</strong> ${tagsDisplay}
                         </div>
                     `;
+                    // --- END OF MODIFICATION (Genre in Tooltip) ---
 
                     showTip(html, event.clientX, event.clientY);
                 }
@@ -154,19 +177,40 @@ function renderChart(d3, data) {
                 // Hide tooltip logic
                 hideTip();
             })
+
+            // --- START OF MODIFICATION (URL Click) ---
             .on("click", (event, d) => {
                 // Hide tooltip on click
                 hideTip();
-                // --- FIX for click ---
-                // Only allow zooming on parent nodes (artists) or zooming out
+
                 if (d.children) {
-                    if (focus !== d) (zoom(event, d), event.stopPropagation());
+                    // It's an artist (parent) circle
+                    if (focus !== d) { // Not already focused
+                        zoom(event, d); // Zoom in
+                        event.stopPropagation(); // Stop the click from bubbling to the SVG
+                    }
                 } else {
-                    // If it's a song, zoom out to the parent artist
-                    if (focus !== d.parent) (zoom(event, d.parent), event.stopPropagation());
+                    // It's a song (leaf) circle
+
+                    // Check if we are zoomed in to the parent artist
+                    if (focus === d.parent) {
+                        // User's new request: Open URL in new tab
+                        if (d.data.url) {
+                            window.open(d.data.url, '_blank');
+                        }
+                        // We must stop propagation, otherwise the click on the SVG
+                        // will fire and zoom us out to the root.
+                        event.stopPropagation();
+                    } else {
+                        // This is the old "fix" logic
+                        // If we're not zoomed in on the parent (e.g., we are at the root)
+                        // just zoom to the parent artist.
+                        zoom(event, d.parent);
+                        event.stopPropagation();
+                    }
                 }
-                // --- END OF FIX ---
             });
+        // --- END OF MODIFICATION (URL Click) ---
 
         // Add a label for each node.
         const label = svg.append("g")
@@ -286,7 +330,11 @@ function processAndRender(d3, dataToProcess, metricForValue) {
                 thumbnail: d.thumbnail,
                 views: d.view_count, // Use the original view_count for display
                 duration: d.duration_string,
-                tags: d.tags
+                tags: d.tags,
+
+                // --- START OF MODIFICATION (Pass URL to hierarchy) ---
+                url: d.url // Pass the url for the click event
+                // --- END OF MODIFICATION (Pass URL to hierarchy) ---
             }))
             // --- END OF MODIFICATION 1 ---
         }))
@@ -326,9 +374,68 @@ function applyFiltersAndRender(d3) {
         return true;
     });
 
+    // --- ADD THIS LINE ---
+    // Update the legend based on the newly filtered data
+    updateLegend(d3, filteredData);
+    // --- END OF ADDED LINE ---
+
     // 3. Process and Render - PASS THE METRIC
     processAndRender(d3, filteredData, filterMetric);
 }
+
+// --- NEW FUNCTION TO ADD ---
+// This function builds and updates the legend
+function updateLegend(d3, filteredData) {
+    const staticKeyMount = d3.select("#legend-static-key");
+    const dynamicGenreMount = d3.select("#legend-dynamic-genres");
+
+    // Clear previous legend items
+    staticKeyMount.html("");
+    dynamicGenreMount.html("");
+
+    // --- 1. Add Static Key (Artist Color & Size) ---
+
+    // Artist Color
+    const artistItem = staticKeyMount.append("div").attr("class", "legend-item");
+    artistItem.append("span")
+        .attr("class", "legend-color-box")
+        .style("background-color", "#ff4d4f"); // The RED from createChart
+    artistItem.append("span")
+        .text("Artist (Parent Circle)");
+
+    // Size Explanations
+    staticKeyMount.append("p")
+        .attr("class", "legend-description")
+        .text("Artist circle size represents the total selected metric (e.g., Views) for all their songs.");
+
+    staticKeyMount.append("p")
+        .attr("class", "legend-description")
+        .text("Song circle size represents the metric value for that specific song.");
+
+    // --- 2. Add Dynamic Genre Key ---
+
+    // --- MODIFICATION: Use the new global, hard-coded color scale ---
+    const colorScaleForLegend = globalGenreColorScale;
+    // --- END OF MODIFICATION ---
+
+    // Get all unique, defined genres from the filtered data
+    const genres = [...new Set(filteredData.map(d => d.genre))]
+        .filter(g => g) // Remove undefined or null genres
+        .sort();         // Sort alphabetically
+
+    // Create a legend item for each genre
+    genres.forEach(genre => {
+        const color = colorScaleForLegend(genre); // This will now pull from the hard-coded scale
+        const item = dynamicGenreMount.append("div").attr("class", "legend-item");
+        item.append("span")
+            .attr("class", "legend-color-box")
+            .style("background-color", color);
+        item.append("span")
+            .text(genre);
+    });
+}
+// --- END OF NEW FUNCTION ---
+
 
 // Load and process the CSV data
 d3.csv("data/youtube-top-100-songs-2025.csv").then(flatData => {

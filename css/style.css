@@ -132,3 +132,71 @@ body {
 .tooltip-unmute-button:hover {
     background-color: #e0e0e0;
 }
+
+/* --- Legend Styles --- */
+#legend-container {
+    width: 100%;
+    max-width: 1000px; /* Aligns with the visualization's effective width */
+    margin: 24px auto 0;
+    padding: 16px 24px;
+    background: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    font-family: var(--font);
+    box-sizing: border-box;
+}
+
+#legend-container h3, #legend-container h4 {
+    width: 100%;
+    margin: 0 0 12px 0;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    color: var(--text);
+}
+
+#legend-container h3 {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+#legend-container h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+#legend-static-key,
+#legend-dynamic-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px; /* Vertical and horizontal gap */
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.legend-color-box {
+    width: 20px;
+    height: 20px;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 4px;
+    display: inline-block;
+    flex-shrink: 0; /* Prevents shrinking in flex layout */
+}
+
+.legend-description {
+    width: 100%;
+    font-size: 13px;
+    font-style: italic;
+    color: #555;
+    margin: 5px 0 5px 0;
+    padding-left: 28px; /* Aligns with text of legend-item */
+    box-sizing: border-box;
+}
