@@ -18,12 +18,16 @@ function renderChart(d3, data) {
         tip.id = "viz-tooltip";
         document.body.appendChild(tip);
     }
-    const showTip = (text, x, y) => {
-        tip.textContent = text;
+
+    // --- MODIFICATION 2: Update showTip to accept HTML ---
+    const showTip = (html, x, y) => {
+        tip.innerHTML = html; // Use innerHTML instead of textContent
         tip.style.left = `${x}px`;
         tip.style.top = `${y}px`;
         tip.style.display = "block";
     };
+    // --- END OF MODIFICATION 2 ---
+
     const hideTip = () => (tip.style.display = "none");
 
 
@@ -36,8 +40,12 @@ function renderChart(d3, data) {
 
         // colours (from new CSS)
         const RED = "#ff4d4f";
-        const RED_STROKE = "#ff6b6b";
         const WHITE = "#ffffff";
+
+        // --- MODIFICATION 1: Create a color scale for genres ---
+        // This scale will automatically assign a color to each unique genre string.
+        // We're using d3.schemeTableau10, a popular and clear color palette.
+        const color = d3.scaleOrdinal(d3.schemeTableau10);
 
         // Compute the layout. ( relies on new width/height)
         const pack = data => d3.pack()
@@ -87,26 +95,77 @@ function renderChart(d3, data) {
             .data(root.descendants().slice(1))
             .join("circle")
             .attr("transform", d => `translate(${d.x},${d.y})`)
-            .attr("fill", d => (d.children ? RED : WHITE)) // New colors
-            .attr("stroke", d => (d.children ? WHITE : RED_STROKE)) // New stroke
-            .attr("stroke-width", 1) // New stroke-width
-            .attr("pointer-events", d => !d.children ? "none" : null)
+            // --- MODIFICATION 2: Update Fill and Stroke Logic ---
+            .attr("fill", d => (
+                d.children ? RED : color(d.data.genre) // Artist (parent) = RED, Song (leaf) = genre color
+            ))
+            .attr("stroke", d => (
+                d.children ? WHITE : d3.color(color(d.data.genre)).darker(0.7) // Artist stroke = WHITE, Song stroke = darker genre color
+            ))
+            // --- End of Modifications ---
+            .attr("stroke-width", 1)
+
+            // --- THIS IS THE FIX ---
+            // The line below was removed, as it was disabling mouse events on the song circles.
+            // .attr("pointer-events", d => !d.children ? "none" : null)
+            // --- END OF FIX ---
+
+            // --- MODIFICATION 3: Update mouseover logic ---
             .on("mouseover", function (event, d) {
-                d3.select(this).attr("stroke", "#000");
+                d3.select(this).attr("stroke", "#000"); // Use black stroke for hover highlight
+
                 // Show tooltip logic
                 if (d.depth === 1 && focus === root) {
+                    // Artist hover (zoomed out)
                     showTip(d.data.name, event.clientX, event.clientY);
+                } else if (d.depth === 2 && d.parent === focus) {
+                    // Song hover (zoomed in)
+
+                    // Format views
+                    const views = d.data.views ? (+d.data.views).toLocaleString() : 'N/A';
+
+                    // Clean up tags
+                    const tags = d.data.tags ? d.data.tags.split(';').join(', ') : 'No tags';
+                    let tagsDisplay = tags;
+                    if (tags.length > 150) {
+                        tagsDisplay = tags.substring(0, 150) + '...';
+                    }
+
+                    // Create HTML string for the tooltip
+                    const html = `
+                        <img src="${d.data.thumbnail}" alt="${d.data.name}" style="width: 100%; max-width: 220px; display: block; margin-bottom: 8px; border-radius: 4px;">
+                        <strong style="font-size: 14px; display: block; margin-bottom: 4px;">${d.data.name}</strong>
+                        <div style="font-size: 12px; opacity: 0.9;">
+                            <strong>Views:</strong> ${views}<br>
+                            <strong>Duration:</strong> ${d.data.duration || 'N/A'}
+                        </div>
+                        <div style="font-size: 10px; opacity: 0.7; margin-top: 6px; max-height: 60px; overflow-y: auto; border-top: 1px solid #444; padding-top: 4px;">
+                            <strong>Tags:</strong> ${tagsDisplay}
+                        </div>
+                    `;
+
+                    showTip(html, event.clientX, event.clientY);
                 }
             })
+            // --- END OF MODIFICATION 3 ---
+
             .on("mouseout", function () {
-                d3.select(this).attr("stroke", null);
+                d3.select(this).attr("stroke", null); // Revert to original stroke (set by .attr("stroke", ...))
                 // Hide tooltip logic
                 hideTip();
             })
             .on("click", (event, d) => {
                 // Hide tooltip on click
                 hideTip();
-                if (focus !== d) (zoom(event, d), event.stopPropagation());
+                // --- FIX for click ---
+                // Only allow zooming on parent nodes (artists) or zooming out
+                if (d.children) {
+                    if (focus !== d) (zoom(event, d), event.stopPropagation());
+                } else {
+                    // If it's a song, zoom out to the parent artist
+                    if (focus !== d.parent) (zoom(event, d.parent), event.stopPropagation());
+                }
+                // --- END OF FIX ---
             });
 
         // Add a label for each node.
@@ -217,11 +276,19 @@ function processAndRender(d3, dataToProcess, metricForValue) {
         name: "Youtube Top 100",
         children: Array.from(grouped, ([key, values]) => ({
             name: key,
+            // --- MODIFICATION 1: Pass more data into the hierarchy ---
             children: values.map(d => ({
                 name: d.title,
-                // FIX: Use the selected metricForValue to set the size of the bubble
-                value: +d[metricForValue]
+                value: +d[metricForValue], // This is for the circle size
+                genre: d.genre,
+
+                // --- Add data for tooltip ---
+                thumbnail: d.thumbnail,
+                views: d.view_count, // Use the original view_count for display
+                duration: d.duration_string,
+                tags: d.tags
             }))
+            // --- END OF MODIFICATION 1 ---
         }))
     };
 

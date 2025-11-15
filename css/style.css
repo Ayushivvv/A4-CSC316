@@ -110,3 +110,25 @@ body {
     filter: brightness(1.05);
     transition: stroke 0.2s ease, filter 0.2s ease;
 }
+
+/* --- ADD THIS TO THE END OF CSS/STYLE.CSS --- */
+
+/* Style for the new unmute button in the tooltip */
+.tooltip-unmute-button {
+    display: block;
+    width: 100%;
+    padding: 6px;
+    margin-top: 8px;
+    font-weight: bold;
+    color: #111;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--font);
+}
+
+.tooltip-unmute-button:hover {
+    background-color: #e0e0e0;
+}
